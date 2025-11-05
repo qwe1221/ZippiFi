@@ -77,7 +77,7 @@
 
 ### 4 接口设计
 
-[ZippiFi-接口设计.md](ZippiFi-接口设计.md)
+[ZippiFi-功能清单.md](ZippiFi-功能清单.md)
 
 ## 五、物理表设计
 
