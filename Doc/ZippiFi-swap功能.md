@@ -306,7 +306,6 @@ ASCII 概览：
 - 概念：展示价格随时间的变化与关键交易指标，帮助用户决策与风控。
 - 内容：当前报价、滑点/价格影响、路径分解、池子流动性与事件状态；可叠加热门路径与失败类型统计。
 - 作用：提高可观测性与透明度，支持提示与错误映射，优化用户体验。
-
 - 概念扩展：
 
   - 数据分层：即时报价（Tick/Depth）、K 线/OHLC（1m/5m/1h/1d）、链上池子状态（储备/费率/TVL/交易量）、事件与告警（暂停、池子迁移、路由变更）。
@@ -323,6 +322,7 @@ ASCII 概览：
   - 监控与告警：Prometheus/Grafana 订阅合约事件与 API 健康，生成暂停/异常提示。
 
 - 集成建议：
+
   - 数据代理层（BFF）：统一封装来源、降采样与缓存策略，向前端暴露一致的字段与时间戳。
   - 容错与回退：主源失败时切换备源；显示“数据延迟/来源切换”提示，避免误导。
   - 合规与版权：明确数据来源与使用条款（TradingView/CoinGecko 等），遵守速率限制与品牌规范。
@@ -365,11 +365,12 @@ flowchart LR
   - K 线与指标：`open/high/low/close/volume`；可叠加 `EMA/SMA/Bollinger` 与交易量柱。
   - 告警与状态：池子暂停/迁移、异常波动、API 限流；在 UI 显示醒目提示与回退状态。
 
-
 ## 按接口区分：操作类接口和查询类接口
+
 为保证前端/后端与链上/第三方服务的协同一致，Swap 接口划分为“操作类（交易/签名）”与“查询类（只读/行情/路由）”。下面给出典型接口清单与作用说明，便于实现与联调。
 
 ### 操作类接口（交易/签名）
+
 - 钱包与签名：
   - `eth_requestAccounts` / `wallet_switchEthereumChain`：连接钱包与网络切换。
   - `personal_sign` / `eth_signTypedData_v4`：用于离线授权或链下签名（如某些聚合器需要）。
@@ -388,6 +389,7 @@ flowchart LR
   - `eth_estimateGas`, `eth_sendTransaction`：前端估算 Gas 与提交；后端可选提供代付或预执行检查。
 
 ### 查询类接口（只读/行情/路由/监控）
+
 - 链上只读：
   - Uniswap v2：`Pair.getReserves`, `Factory.getPair`；读取储备与池子地址。
   - Uniswap v3：`Pool.slot0`, `liquidity`, `ticks`；读取价格刻度与流动性。
@@ -406,6 +408,7 @@ flowchart LR
   - 健康检查与限流信息：后端或第三方 API 的状态页，前端在数据视图显示来源与延迟。
 
 ### 字段与约定（建议）
+
 - 操作请求（示例）：
   - `SwapRequest`：`sellToken`, `buyToken`, `amountIn`, `slippage`, `deadline`, `route`, `permitSig?`, `chainId`。
   - 返回：`to`, `data`, `value`, `gas`, `quote`, `priceImpact`, `sources`。
@@ -414,6 +417,7 @@ flowchart LR
   - `PoolState`：`reserve0/1` 或 `slot0/liquidity/tick`, `fee`, `paused?`。
 
 ### 集成与容错
+
 - 主源/备源：为报价与路由配置主源与备源，失败时回退并在 UI 标注“来源切换/数据延迟”。
 - 一致性：所有接口返回需包含 `ts` 与 `source` 字段，便于用户理解数据新鲜度。
 - 合规与版权：明确第三方 API/图表组件使用条款与品牌规范，遵守速率限制。
